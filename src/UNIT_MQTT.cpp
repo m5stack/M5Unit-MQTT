@@ -25,7 +25,7 @@ void UNIT_MQTT::sendMsg(String command) {
     delay(10);
 }
 
-void UNIT_MQTT::subcribe(SubcribeTopic Topic) {
+void UNIT_MQTT::subscribe(SubscribeTopic Topic) {
     String readstr;
     sendMsg("AT+MQSUBSCRIBE="+ Topic.No + ",1,\"" + Topic.Topic + "\","+ Topic.QoS + "\r\n");
     readstr = waitMsg(200);

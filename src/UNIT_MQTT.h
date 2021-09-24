@@ -2,7 +2,7 @@
 #include <Arduino.h>
 
 
-struct SubcribeTopic
+struct SubscribeTopic
 {
 	String No;
 	String Topic;
@@ -31,7 +31,7 @@ class UNIT_MQTT
             String pwd = "pwd",
             String keepalive = "60"
         );
-        void subcribe(SubcribeTopic Topic);
+        void subscribe(SubscribeTopic Topic);
         void publish(PublishTopic Topic);
         bool configSave();
         bool isConnectedMQTT();
