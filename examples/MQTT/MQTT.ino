@@ -1,41 +1,50 @@
+#include "M5Atom.h"
 #include "UNIT_MQTT.h"
 
 UNIT_MQTT unit;
+uint32_t chipId = 0;
+unsigned long start = 0;
+
+
 void setup()
 {
-    Serial.begin(115200);
+    
+    M5.begin(true, false, true);
     //INIT UNIT MQTT
-    unit.Init(&Serial2, 9600, 16, 17);
+    unit.Init(&Serial2, 9600, 32, 26);
     Serial.println("Waiting LAN Connect");
+    M5.dis.fillpix(0x0000ff);
     while (!unit.isConnectedLAN())Serial.print('.');
-
+  
     Serial.println("LAN Connected");
-
     Serial.println("Config MQTT");
+    for(int i=0; i<17; i=i+8) {
+      chipId |= ((ESP.getEfuseMac() >> (40 - i)) & 0xff) << i;
+    }
+
+    String id = String(chipId, HEX);
+    Serial.println("ID: " +  id);
 
     unit.configMQTT(
         "mqtt.m5stack.com",//host
         "1883",//port
-        "client",//client id
-        "user",//user name
+        id,//client id
+        "user"+id,//user name
         "pwd",//password
         "60"//keepalive
     );
 
     Serial.println("Subcribe Topic");
-    unit.subcribe({
+  
+    SubscribeTopic topic1 = {
         "1",//No 1~-4
-        "UNIT_MQTT_TOPIC_1",//Topic
+        "UNIT_MQTT",//Topic
         "2"//QoS
-    });
+    };
 
-    unit.subcribe({
-        "2",
-        "UNIT_MQTT_TOPIC_2",
-        "2"
-    });
-
+    unit.subscribe(topic1);
     Serial.println("Save config and reset");
+    M5.dis.fillpix(0x5400ff);
     unit.configSave();
     unit.startMQTT();
     Serial.println("Start MQTT Connect");
@@ -47,16 +56,19 @@ void loop()
 {
     if(unit.isConnectedMQTT())
     {   
-        String readstr = unit.waitMsg(1000);
-        Serial.print(readstr);
+      M5.dis.fillpix(0x00ff00);
+      String readstr = unit.waitMsg(1);
+      Serial.print(readstr);
+      if(millis()-start > 2000){
         unit.publish({
             "UNIT_MQTT_TOPIC_1",//Topic
             "Hello UNIT MQTT: "+String(millis()),//Data
             "2"//QoS
         });
+        start = millis();
+      }
     }else{
-        Serial.print("MQTT disconnect");
+      M5.dis.fillpix(0x00ff00);
+      Serial.print("MQTT disconnect");
     }
 }
-
-
