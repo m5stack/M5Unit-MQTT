@@ -16,6 +16,13 @@ struct PublishTopic
 	String QoS;
 };
 
+struct PayloadTopic
+{
+	String Topic;
+	int Len;
+	String Data;
+};
+
 class UNIT_MQTT
 {
     private:
@@ -35,7 +42,10 @@ class UNIT_MQTT
         void publish(PublishTopic Topic);
         bool configSave();
         bool isConnectedMQTT();
+        bool receiveMessage();
         void startMQTT();
         String waitMsg(unsigned long time);
         void sendMsg(String command);
+    public:
+        PayloadTopic payload;
 };

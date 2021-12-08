@@ -12,7 +12,7 @@ String UNIT_MQTT::waitMsg(unsigned long time) {
     while(1){
         if(Serial2.available() || (millis() - start) < time) {
             String str = Serial2.readString();
-                restr += str;
+            restr += str;
         }else{
             break;
         }
@@ -58,6 +58,28 @@ bool UNIT_MQTT::isConnectedMQTT() {
     sendMsg("AT+MQSTATUS?\r\n");
     readstr = waitMsg(100);
     if(readstr.indexOf("+MQSTATUS=OK:1") != -1 ) {
+       return true;
+    }else{
+       return false;
+    }
+}
+
+bool UNIT_MQTT::receiveMessage() {
+    String readstr;
+    readstr = waitMsg(1);
+    if(readstr.indexOf("+MQRECV:") != -1 ) {
+       payload.Topic = readstr.substring(
+           readstr.indexOf("+MQRECV:") + 9, 
+           readstr.indexOf(",") - 1 
+       );
+       payload.Len = readstr.substring(
+           readstr.indexOf("\",") + 2,
+           readstr.indexOf(",\"")
+       ).toInt();
+       payload.Data = readstr.substring(
+           readstr.indexOf(",\"") + 2,
+           readstr.lastIndexOf("\"")
+       );
        return true;
     }else{
        return false;

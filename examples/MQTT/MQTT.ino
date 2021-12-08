@@ -39,7 +39,7 @@ void setup()
     SubscribeTopic topic1 = {
         "1",//No 1~-4
         "UNIT_MQTT",//Topic
-        "2"//QoS
+        "0"//QoS
     };
 
     unit.subscribe(topic1);
@@ -57,9 +57,12 @@ void loop()
     if(unit.isConnectedMQTT())
     {   
       M5.dis.fillpix(0x00ff00);
-      String readstr = unit.waitMsg(1);
-      Serial.print(readstr);
-      if(millis()-start > 2000){
+      if(unit.receiveMessage()){
+        Serial.println(unit.payload.Topic);
+        Serial.println(unit.payload.Len);
+        Serial.println(unit.payload.Data);
+      }
+      if(millis()-start > 5000){
         unit.publish({
             "UNIT_MQTT_TOPIC_1",//Topic
             "Hello UNIT MQTT: "+String(millis()),//Data
