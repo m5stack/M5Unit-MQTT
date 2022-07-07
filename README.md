@@ -1,4 +1,4 @@
-# M5Stack UNIT MQTT
+# M5Unit-MQTT
 
 ## Overview
 
@@ -6,9 +6,9 @@ Contains M5Stack **UNIT MQTT** related case programs. Realize MQTT server connec
 
 ## Related Link
 
-[Document & AT Command](https://docs.m5stack.com/en/unit/mqtt)
+[Document & AT Command - M5Unit-MQTT](https://docs.m5stack.com/en/unit/mqtt)
 
 ## License
 
-[UNIT MQTT - MIT](LICENSE)
+[M5Unit-MQTT - MIT](LICENSE)
 
